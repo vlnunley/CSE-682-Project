@@ -1,0 +1,13 @@
+services:
+  tracker-ui:
+    image: tracker-ui:latest
+    build:
+      dockerfile: tracker-ui/Dockerfile
+    ports:
+      - "8080:8080"
+  tracker-server:
+    image: tracker-server:latest
+    build:
+      dockerfile: tracker-server/Dockerfile
+      ports:
+      - "5000:5000"
