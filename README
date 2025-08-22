@@ -1,0 +1,17 @@
+How to setup the project:
+
+Preprerequisites:
+Python 3.12 installed
+Node.JS 22.14 installed
+npm 11.2 installed (Should come with Node.JS)
+
+To setup UI run the following commands:
+cd tracker-ui
+npm install
+
+To setup Server run the following commands:
+cd tracker-server
+python3 -m venv env12
+source env12/Script/activate --Fow Windows
+source env12/bin/activate --For Mac/Linux
+pip install -r requirements.txt
