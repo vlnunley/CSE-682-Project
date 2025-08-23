@@ -2,12 +2,12 @@ services:
   tracker-ui:
     image: tracker-ui:latest
     build:
-      dockerfile: tracker-ui/Dockerfile
+      context: ./tracker-ui
     ports:
-      - "8080:8080"
+      - "3000:3000"
   tracker-server:
     image: tracker-server:latest
     build:
-      dockerfile: tracker-server/Dockerfile
-      ports:
+      context: ./tracker-server
+    ports:
       - "5000:5000"
