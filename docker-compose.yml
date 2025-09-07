@@ -5,9 +5,28 @@ services:
       context: ./tracker-ui
     ports:
       - "3000:3000"
+    volumes:
+      - "./tracker-ui:/app"
+      - "/app/node_modules"
   tracker-server:
     image: tracker-server:latest
     build:
       context: ./tracker-server
+    env_file:
+      - .env
     ports:
       - "5000:5000"
+  tracker-database:
+    image: tracker-database:latest
+    build:
+      context: ./tracker-database
+    shm_size: 4gb
+    environment:
+      POSTGRES_DB: tracker
+      POSTGRES_PASSWORD: tr@ck3r
+    ports:
+      - "5432:5432"
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+volumes:
+  pgdata: {}

@@ -1,7 +1,7 @@
 <template>
-  <HelloWorld />
+  <UserLogin />
 </template>
 
-<script setup>
+<script lang="ts" setup>
   //
 </script>
