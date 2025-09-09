@@ -1,0 +1,7 @@
+{
+    "DBHOST":"tracker-database",
+    "DBPORT":5432,
+    "DATABASE":"tracker",
+    "DBUSER":"postgres",
+    "DBPASS":"tr@ck3r"
+}

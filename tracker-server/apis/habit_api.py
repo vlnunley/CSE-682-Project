@@ -65,7 +65,7 @@ def get_habit_by_id(id: int):
 
     return jsonify(habit)
 
-@habit_bp.route("/create", methods=["POST, PUT"])
+@habit_bp.route("/create", methods=["POST", "PUT"])
 def create_habit():
     with get_db_connection(current_app.config) as db:
         model = Habit(**request.get_json())

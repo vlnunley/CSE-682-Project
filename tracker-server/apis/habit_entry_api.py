@@ -28,7 +28,7 @@ def get_habit_entry(id: int):
         }
     return jsonify(entry)
 
-@habit_entry_bp.route("", methods=["POST, PUT"])
+@habit_entry_bp.route("", methods=["POST", "PUT"])
 def create_habit_entry():
     with get_db_connection(current_app.config) as db:
         model = HabitEntry(**request.get_json())

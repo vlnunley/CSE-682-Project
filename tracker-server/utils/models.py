@@ -13,13 +13,13 @@ class TrackerBaseModel(ABC):
         raise NotImplementedError
     
 @dataclass(kw_only=True)
-class User(TrackerBaseModel):
-    TABLE: ClassVar[str] = "user"
+class Users(TrackerBaseModel):
+    TABLE: ClassVar[str] = "users"
     id: Optional[int] = None
     username: str
     password: str
     email: str
-    phoneNumber: Optional[str] = None
+    phone_number: Optional[str] = None
 
 @dataclass(kw_only=True)
 class Habit(TrackerBaseModel):
@@ -28,7 +28,7 @@ class Habit(TrackerBaseModel):
     name: str
     classification: Optional[str] = None
     active: bool = True
-    user: User
+    user: Users
 
 @dataclass(kw_only=True)
 class Goal(TrackerBaseModel):

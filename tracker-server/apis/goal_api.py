@@ -34,7 +34,7 @@ def get_goals():
 
     return jsonify(goals)
 
-@goal_bp.route("/create", methods=["POST, PUT"])
+@goal_bp.route("/create", methods=["POST", "PUT"])
 def create_goal():
     with get_db_connection(current_app.config) as db:
         model = Goal(**request.get_json())

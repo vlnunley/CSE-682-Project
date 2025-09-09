@@ -6,27 +6,43 @@ from utils.db_query import (
     create_model,
     update_model
 )
-from utils.models import User
+from utils.models import Users
 
-user_bp = Blueprint("user", __name__)
+user_bp = Blueprint("user", __name__, url_prefix="/user")
 
-@user_bp.route("/<id>", methods=["GET"])
-def get_user(id: int):
+@user_bp.route("/<name>", methods=["GET"])
+def get_user(name: str):
     with get_db_connection(current_app.config) as db:
-        return jsonify(fetch_model_data_by_id(id))
+        sql = f"SELECT * FROM {Users.TABLE} WHERE username = %s"
+        cur = db.cursor()
+        cur.execute(sql, (name,))
+        ret = cur.fetchone()
 
-@user_bp.route("/create", methods=["POST, PUT"])
-def create_goal():
+        user = {
+            "id": ret["id"],
+            "username": name,
+            "password": ret["password"]
+        }
+
+        return jsonify(user)
+    
+@user_bp.route("/create", methods=["POST", "PUT"])
+def create_user():
     with get_db_connection(current_app.config) as db:
-        model = User(**request.get_json())
+        model = Users(**request.get_json())
         return jsonify(create_model(db, model))
 
 @user_bp.route("/update/<id>", methods=["POST"])
-def update_goal(id: int):
+def update_user(id: int):
     with get_db_connection(current_app.config) as db:
-        model = User(**request.get_json())
+        model = Users(**request.get_json())
         try:
             update_model(db, model, id)
             return jsonify(model)
         except KeyError as exc:
             return make_response(jsonify({"error": str(exc)}), 404)
+        
+def check_user():
+    pass
+    
+    
