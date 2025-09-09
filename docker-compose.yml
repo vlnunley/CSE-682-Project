@@ -1,5 +1,6 @@
 services:
   tracker-ui:
+    container_name: tracker_ui
     image: tracker-ui:latest
     build:
       context: ./tracker-ui
@@ -8,7 +9,10 @@ services:
     volumes:
       - "./tracker-ui:/app"
       - "/app/node_modules"
+    networks:
+      - appnet
   tracker-server:
+    container_name: tracker_server
     image: tracker-server:latest
     build:
       context: ./tracker-server
@@ -16,7 +20,10 @@ services:
       - .env
     ports:
       - "5000:5000"
+    networks:
+      - appnet
   tracker-database:
+    container_name: tracker_database
     image: tracker-database:latest
     build:
       context: ./tracker-database
@@ -28,5 +35,12 @@ services:
       - "5432:5432"
     volumes:
       - "pgdata:/var/lib/postgresql/data"
+    networks:
+      - appnet
+
 volumes:
   pgdata: {}
+  
+networks:
+  appnet:
+    driver: bridge

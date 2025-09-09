@@ -1,23 +1,26 @@
 <template>
     <div>
         <v-img
-        class="mx-auto my-6"
+        class="mx-auto"
         :width="350"
         aspect-ratio="16/9"
         cover
         src="../../assets/habitlogo.png"
         ></v-img>
-        <v-form class="" v-model="valid">
+        <v-form class="mb-3" v-model="valid">
            <v-card
             class="w-25 my-auto mx-auto pa-12 pb-8"
             elevation="8"
             rounded="lg"
             >
-                <div class="text-subtitle-1 text-medium-emphasis">Account</div>
+                <v-card-title class="text-center mb-3">Account Login</v-card-title>
+
+                <div class="text-subtitle-1 text-medium-emphasis">Username</div>
 
                 <v-text-field
                     density="compact"
                     placeholder="Username"
+                    v-model="username"
                     prepend-inner-icon="mdi-account-outline"
                     variant="outlined"
                 ></v-text-field>
@@ -37,6 +40,7 @@
                     :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                     :type="visible ? 'text' : 'password'"
                     density="compact"
+                    v-model="password"
                     placeholder="Enter your password"
                     prepend-inner-icon="mdi-lock-outline"
                     variant="outlined"
@@ -49,18 +53,19 @@
                     size="large"
                     variant="tonal"
                     block
+                    @click="login"
                 >
                     Log In
                 </v-btn>
 
                 <v-card-text class="text-center">
+                    <div>Don't have an Account?</div>
                     <a
                     class="text-blue text-decoration-none"
-                    href="#"
+                    href="/register"
                     rel="noopener noreferrer"
-                    target="_blank"
                     >
-                    Sign up now <v-icon icon="mdi-chevron-right"></v-icon>
+                        Sign up
                     </a>
                 </v-card-text>
             </v-card>
@@ -69,4 +74,28 @@
 </template>
 
 <script setup>
+import { ref, onMounted, computed} from 'vue'
+import { useRouter, useRoute } from 'vue-router';
+import axios from 'axios'
+
+const username = ref('')
+const password = ref('')
+const router = useRouter(); // Access the router instance
+const route = useRoute();
+
+async function login(e)
+{
+    let url = 'http://127.0.0.1:5000/user/'+username.value
+    await axios
+    .get(url)
+    .then(response => {
+        console.log(response)
+        if(response.data["password"] == password.value)
+        {
+            router.push("/habits/habits")
+        }
+    })
+    .catch(err => console.error("Network or parsing error:", err))
+}
+
 </script>

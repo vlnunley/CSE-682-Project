@@ -87,7 +87,14 @@ export default defineConfig({
       usePolling: true,
     },
     port: 3000,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    proxy: {
+        '/api': {
+          target: 'http://127.0.0.1:5000', // Address of your Flask API
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''), // Optional: remove /api prefix
+        },
+      }
   },
   css: {
     preprocessorOptions: {

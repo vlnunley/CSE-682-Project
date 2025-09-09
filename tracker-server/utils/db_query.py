@@ -1,4 +1,5 @@
 from dataclasses import fields
+from flask import jsonify, make_response
 import psycopg
 from psycopg.rows import class_row, dict_row
 import logging
@@ -21,7 +22,7 @@ def get_db_connection(app_config) -> psycopg.Connection:
 def _connect_with_retry(params) -> psycopg.Connection:
     attempts = 3
     while attempts > 0:
-        attemps -= -1
+        attempts -= 1
         try:
             return psycopg.connect(**params, row_factory=dict_row)
         except psycopg.Error as exc:
@@ -49,13 +50,22 @@ def fetch_all_model_data(db: psycopg.Connection, cls: type[TrackerBaseModel]) ->
     sql = f"SELECT * FROM {cls.TABLE}"
     with db.cursor(row_factory=class_row(cls)) as cur:
         cur.execute(sql)
-        return cur.fetchall
-
+        rows = cur.fetchall()
+        results = [obj_to_dict(row) for row in rows]
+        return results
+    
 def fetch_model_data_by_id(db: psycopg.Connection, cls: type[TrackerBaseModel], row_ids: list[id]) -> list[type[TrackerBaseModel]] :
     sql = f"SELECT * FROM {cls.TABLE} where id = ANY(%s)"
     with db.cursor(row_factory=class_row(cls)) as cur:
         cur.execute(sql, (row_ids,))
-        return cur.fetchall
+        rows = cur.fetchall()
+        results = [obj_to_dict(row) for row in rows]
+        ret = {
+            "success": True,
+            "data": results,
+            "error": None 
+        }
+        return ret
     
 def update_model(db: psycopg.Connection, instance: TrackerBaseModel, row_id: int) -> None:
     cols = [f.name for f in fields(instance) if f.name != "id"]
@@ -67,16 +77,31 @@ def update_model(db: psycopg.Connection, instance: TrackerBaseModel, row_id: int
         db.commit()
 
 def create_model(db: psycopg.Connection, instance: TrackerBaseModel) -> type[TrackerBaseModel]:
-    cols = [f.name for f in fields(instance) if f.name != "id"]
-    sql = f"INSERT INTO {instance.TABLE} ({','.join(cols)}) VALUES ({','.join(len(cols)*['%s'])}) returning id"
-    with db.cursor() as cur:
-        cur.execute(sql, tuple([getattr(instance, c) for c in cols]))
-        row_id = cur.fetchone()["id"]
-        db.commit()
-    return fetch_model_data_by_id(db, instance.__class__, [row_id])
+    try:
+        cols = [f.name for f in fields(instance) if f.name != "id"]
+        sql = f"INSERT INTO {instance.TABLE} ({','.join(cols)}) VALUES ({','.join(len(cols)*['%s'])}) returning id"
+        with db.cursor() as cur:
+            cur.execute(sql, tuple([getattr(instance, c) for c in cols]))
+            row_id = cur.fetchone()["id"]
+            db.commit()
+        return fetch_model_data_by_id(db, instance.__class__, [row_id])
+    except Exception as exc:
+        ret = {
+            "success": False,
+            "data": None,
+            "error": str(exc) 
+        }
+        return ret
+
+
+   
 
 def delete_model(db: psycopg.Connection, cls: TrackerBaseModel, row_id: int) -> None:
     sql = f"DELETE FROM {cls.TABLE} WHERE id = %s"
     with db.cursor() as cur:
         cur.execute(sql, (row_id,))
         db.commit()
+    
+def obj_to_dict(obj):
+    """Convert object to dict for jsonify."""
+    return obj.__dict__.copy()
