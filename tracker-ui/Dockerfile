@@ -1,4 +1,4 @@
-FROM node:22.18-slim as installer
+FROM node:22.18-slim AS installer
 
 WORKDIR /app
 

@@ -100,6 +100,21 @@
                 </v-card-text>
             </v-card>
         </v-form>
+        <v-snackbar
+        v-model="snackbar"
+        timeout="3000"
+        :color="snackError ? 'error': 'success'"
+        >
+            {{ message }}
+            <template v-slot:actions>
+                <v-btn
+                variant="text"
+                @click="snackbar = false"
+                >
+                X
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 
@@ -114,7 +129,9 @@ const confirmPassword = ref('')
 const isRegister = ref(false)
 const visible = ref(false)
 const revisible = ref(false)
-const errorMessage = ref('')
+const snackbar = ref(false)
+const snackError = ref(false)
+const message = ref('')
 
 const usenameRules = [
     value => {
@@ -159,13 +176,12 @@ const confirmPasswordRules = [
 
 async function createAccount(e) {
     console.log(e)
+    message.value = "Account Successfully Created."
     let newUser = {
         "username": username.value,
         "password": password.value,
         "email": email.value
     }
-
-    console.log(newUser)
 
     await axios
         .post('http://127.0.0.1:5000/user/create', newUser, {
@@ -175,12 +191,17 @@ async function createAccount(e) {
         )
         .then(response => {
             console.log(response)
-            if(response.success)
+            if(response.data.success)
             {
-                console.log("User Data:", response.data)
+                console.log("User Data:", response.data.data)
+                snackError.value = false
+                snackbar.value = true
             }
             else {
-                console.error("Error: ", response.error)
+                console.error("Error: ", response.data.error)
+                message.value = "Username already in use."
+                snackError.value = true
+                snackbar.value = true
             }
         })
         .catch(err => console.error("Network or parsing error:", err))

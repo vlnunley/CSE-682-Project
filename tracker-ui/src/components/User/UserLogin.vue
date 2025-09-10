@@ -70,29 +70,57 @@
                 </v-card-text>
             </v-card>
         </v-form>
+        <v-snackbar
+            v-model="snackbar"
+            timeout="3000"
+            color="error"
+        >
+            {{ message }}
+            <template v-slot:actions>
+                <v-btn
+                variant="text"
+                @click="snackbar = false"
+                >
+                X
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 
+
 <script setup>
-import { ref, onMounted, computed} from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios'
+import { useUserStore } from '@/stores/user'
 
+const userStore = useUserStore()
+const valid = ref(false)
 const username = ref('')
 const password = ref('')
-const router = useRouter(); // Access the router instance
-const route = useRoute();
+const router = useRouter()
+const message = ref('')
+const snackbar = ref(false)
+const visible = ref(false)
 
-async function login(e)
+async function login()
 {
     let url = 'http://127.0.0.1:5000/user/'+username.value
     await axios
     .get(url)
     .then(response => {
         console.log(response)
-        if(response.data["password"] == password.value)
+        if(response.data.data["password"] == password.value)
         {
-            router.push("/habits/habits")
+            router.push("/home")
+            userStore.$patch({
+                userId: response.data.data["id"],
+                username: response.data.data["username"]
+            })
+        }
+        else{
+            message.value = "Incorrect Username or Password."
+            snackbar.value = true
         }
     })
     .catch(err => console.error("Network or parsing error:", err))

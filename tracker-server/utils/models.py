@@ -27,8 +27,10 @@ class Habit(TrackerBaseModel):
     id: Optional[int] = None
     name: str
     classification: Optional[str] = None
+    description: Optional[str] = None
     active: bool = True
-    user: Users
+    created_date: datetime
+    user_id: int
 
 @dataclass(kw_only=True)
 class Goal(TrackerBaseModel):
@@ -37,7 +39,7 @@ class Goal(TrackerBaseModel):
     name: str
     frequencyNum: int
     frequencyType: str
-    habitId: int
+    habit_id: int
 
 @dataclass(kw_only=True)
 class HabitEntry(TrackerBaseModel):
@@ -46,8 +48,8 @@ class HabitEntry(TrackerBaseModel):
     created_date: datetime
     note: Optional[str] = None
     status: str
-    habitId: int
-    goalId: int
+    habit_id: int
+    goal_id: int
 
 @dataclass(kw_only=True)
 class Mood(TrackerBaseModel):

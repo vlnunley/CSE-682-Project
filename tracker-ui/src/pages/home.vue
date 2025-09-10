@@ -1,5 +1,5 @@
 <template>
-  <HabitList />
+  <HomeCard />
 </template>
 
 <script lang="ts" setup>

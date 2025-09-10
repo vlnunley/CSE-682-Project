@@ -11,6 +11,8 @@ CREATE TABLE "habit" (
   "name" varchar NOT NULL,
   "active" boolean NOT NULL DEFAULT true,
   "classification" varchar,
+  "description" varchar,
+  "created_date" TIMESTAMP with time zone not null DEFAULT now(),
   "user_id" bigint
 );
 
