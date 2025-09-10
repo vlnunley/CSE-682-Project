@@ -9,6 +9,7 @@
                 <v-data-table :headers="habitHeaders" :items="habitList" class="t-spacing">
                     <template v-slot:item.actions="{ item }">
                         <div class="d-flex ga-2 justify-start">
+                            <v-icon color="medium-emphasis" icon="mdi-eye" size="small" @click="edit(item.id)"></v-icon>
                             <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" @click="edit(item.id)"></v-icon>
                             <v-icon color="medium-emphasis" icon="mdi-delete" size="small" @click="remove(item.id)"></v-icon>
                         </div>
@@ -27,11 +28,11 @@ import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 const {userId, username} = storeToRefs(userStore)
 const habitHeaders = [
-    { title: 'Created Date', key: 'created_date' },
+    { title: 'Created Date', key: 'created_date', width:'20%'},
     { title: 'Name', key: 'name' },
-    { title: 'Description', key: 'description', sortable: false },
-    { title: 'Classification', key: 'classification' },
-    { title: 'Actions', key: 'actions', sortable: false}
+    { title: 'Description', key: 'description', sortable: false, width:'30%' },
+    { title: 'Classification', key: 'classification', width:'20%' },
+    { title: 'Actions', key: 'actions', sortable: false, width:'10%'}
 ]
 const habitList = ref([])
 
