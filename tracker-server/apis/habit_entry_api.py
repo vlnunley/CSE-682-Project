@@ -12,6 +12,29 @@ from utils.models import HabitEntry
 
 habit_entry_bp = Blueprint("habit_entry", __name__)
 
+
+@habit_entry_bp.route("", methods=["POST"])
+def get_habit_entries():
+    body = request.get_json()
+    habit_id=body["habit_id"]
+    with get_db_connection(current_app.config) as db:
+        sql = f"SELECT * FROM {HabitEntry.TABLE} WHERE habit_id = %s"
+        cur = db.cursor()
+        cur.execute(sql, (habit_id, ))
+        ret = cur.fetchall()
+
+        entries = []
+        for row in ret:
+            entry = {
+                "id": row["id"],
+                "created_date": row["created_date"],
+                "note": row["note"],
+                "status": row["status"],
+            }
+            entries.append(entry)
+
+    return jsonify(entries)
+
 @habit_entry_bp.route("/<id>", methods=["GET"])
 def get_habit_entry(id: int):
     with get_db_connection(current_app.config) as db:
@@ -21,20 +44,20 @@ def get_habit_entry(id: int):
         ret = cur.fetchone()
 
         entry = {
+            "id": ret["id"],
             "created_date": ret["created_date"],
             "note": ret["note"],
             "status": ret["status"],
-            "goal": get_goal()
         }
     return jsonify(entry)
 
-@habit_entry_bp.route("", methods=["POST", "PUT"])
+@habit_entry_bp.route("/create", methods=["POST", "PUT"])
 def create_habit_entry():
     with get_db_connection(current_app.config) as db:
         model = HabitEntry(**request.get_json())
         return jsonify(create_model(db, model))
     
-@habit_entry_bp.route("/<id>", methods=["POST"])
+@habit_entry_bp.route("/update/<id>", methods=["POST"])
 def update_habit_entry(id: int):
     with get_db_connection(current_app.config) as db:
         model = HabitEntry(**request.get_json())

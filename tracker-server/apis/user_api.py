@@ -12,19 +12,30 @@ user_bp = Blueprint("user", __name__, url_prefix="/user")
 
 @user_bp.route("/<name>", methods=["GET"])
 def get_user(name: str):
-    with get_db_connection(current_app.config) as db:
-        sql = f"SELECT * FROM {Users.TABLE} WHERE username = %s"
-        cur = db.cursor()
-        cur.execute(sql, (name,))
-        ret = cur.fetchone()
-
-        user = {
-            "id": ret["id"],
-            "username": name,
-            "password": ret["password"]
+    try:
+        with get_db_connection(current_app.config) as db:
+            sql = f"SELECT * FROM {Users.TABLE} WHERE username = %s"
+            cur = db.cursor()
+            cur.execute(sql, (name,))
+            row = cur.fetchone()
+            user = {
+                "id": row["id"],
+                "username": name,
+                "password": row["password"]
+            }
+            ret = {
+                "success": True,
+                "data": user,
+                "error": None
+            }
+            return jsonify(ret)
+    except Exception as exc:
+        ret = {
+            "success": False,
+            "data": None,
+            "error": str(exc) 
         }
-
-        return jsonify(user)
+        return ret 
     
 @user_bp.route("/create", methods=["POST", "PUT"])
 def create_user():
@@ -41,8 +52,4 @@ def update_user(id: int):
             return jsonify(model)
         except KeyError as exc:
             return make_response(jsonify({"error": str(exc)}), 404)
-        
-def check_user():
-    pass
-    
     

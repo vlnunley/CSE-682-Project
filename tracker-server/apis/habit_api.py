@@ -31,13 +31,12 @@ def get_all_habits():
         habits = []
 
         for row in ret:
-            entries = get_habit_entries(row["id"])
-            goals = get_goals(row["id"])
             habit = {
                 "id": row["id"],
+                "created_date": row["created_date"],
                 "name": row["name"],
-                "goals": goals,
-                "entries": entries
+                "description": row["description"],
+                "classification": row["classification"]
             } 
             habits.append(habit)
 
@@ -53,14 +52,10 @@ def get_habit_by_id(id: int):
         cur = db.cursor()
         cur.execute(sql, (user_id, id))
         ret = cur.fetchone()
-        
-        entries = get_habit_entries(id)
-        goals = get_goals(id)
         habit = {
             "id": id,
             "name": ret["name"],
-            "goals": goals,
-            "entries": entries
+            "classification": ret["classification"]
         }
 
     return jsonify(habit)
@@ -84,46 +79,9 @@ def update_habit(id: int):
 @habit_bp.route("/<id>", methods=["DELETE"])
 def delete_habit(id: int):
     with get_db_connection(current_app.config) as db:
-        model = Habit(**request.get_json())
+        model = Habit()
         try:
-            entrySql = "DELETE FROM habit_entry WHERE"
             delete_model(db, model, id)
             return jsonify(model)
         except KeyError as exc:
             return make_response(jsonify({"error": str(exc)}), 404)
-
-def get_habit_entries(id: int):
-    with get_db_connection(current_app.config) as db:
-        cur = db.cursor()
-        sql = f"SELECT * FROM {HabitEntry.TABLE} WHERE habit_id = %s"
-        cur.execute(sql, (id,))
-        ret = cur.fetchall()
-        entries = []
-
-        for row in ret:
-            entry = {
-                "created_date": row["created_date"],
-                "note": row["note"],
-                "status": row["status"],
-            }
-            entries.append(entry)
-        
-    return entries
-
-def get_goals(id: int):
-    with get_db_connection(current_app.config) as db:
-        cur = db.cursor()
-        sql = f"SELECT * FROM {Goal.TABLE} WHERE habit_id = %s"
-        cur.execute(sql, (id,))
-        ret = cur.fetchall()
-        goals = []
-
-        for row in ret:
-            goal = {
-                "name": row["name"],
-                "frequencyNum": row["frequency_num"],
-                "frequencyType": row["frequency_type"]
-            }
-            goals.append(goal)
-
-    return goals
