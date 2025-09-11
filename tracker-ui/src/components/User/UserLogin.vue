@@ -90,7 +90,7 @@
 
 
 <script setup>
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 

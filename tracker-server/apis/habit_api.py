@@ -79,9 +79,8 @@ def update_habit(id: int):
 @habit_bp.route("/<id>", methods=["DELETE"])
 def delete_habit(id: int):
     with get_db_connection(current_app.config) as db:
-        model = Habit(**request.get_json())
+        model = Habit()
         try:
-            entrySql = "DELETE FROM habit_entry WHERE"
             delete_model(db, model, id)
             return jsonify(model)
         except KeyError as exc:

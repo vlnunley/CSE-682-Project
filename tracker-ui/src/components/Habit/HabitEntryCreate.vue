@@ -5,48 +5,39 @@
                 v-bind="activatorProps"
                 class="mt-3 ml-3" 
                 color="teal-darken-3"
-                text="Create Habit"
+                text="Create Habit Entry"
             ></v-btn>
         </template>
 
         <template v-slot:default="{ isActive }">
-            <v-card title="Create Habit" class="bg-teal-darken-3">
+            <v-card title="Create Habit Entry" class="bg-teal-darken-3">
                 <v-card-text class="bg-grey-darken-4">
                     <div class="mt-4 text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-                        Name
-                    </div>
-                    <v-text-field
-                        density="compact"
-                        v-model="habitName"
-                        placeholder="Habit Name"
-                        variant="outlined"
-                    ></v-text-field>
-                    <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-                        Description
-                    </div>
-                    <v-text-field
-                        density="compact"
-                        v-model="habitDescription"
-                        placeholder="Habit Description"
-                        variant="outlined"
-                    ></v-text-field>
-                    <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-                        Classification
+                        Status
                     </div>
                     <v-select
-                        v-model="selectedClassification"
+                        v-model="selectedStatus"
                         clearable
                         density="compact"
-                        label="Classification"
-                        :items="['Positive', 'Negative', 'Neutral']"
+                        label="Status"
+                        :items="['Completed', 'Missed']"
                     ></v-select>
+                    <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+                        Notes
+                    </div>
+                    <v-textarea
+                        clear-icon="mdi-close-circle"
+                        label="Entry Notes"
+                        v-model="entryNote"
+                        clearable
+                    ></v-textarea>
                 </v-card-text>
                 <v-card-actions class="bg-grey-darken-4">
                     <v-spacer></v-spacer>
                     <v-btn
                         color="teal-lighten-1"
                         text="Create"
-                        @click="createHabit(isActive)"
+                        @click="createHabitEntry(isActive)"
                     ></v-btn>
                     <v-btn
                         color="amber-lighten-2"
@@ -61,29 +52,27 @@
 
 <script setup>
 import axios from 'axios'
-import { useUserStore } from '@/stores/user'
-
-const userStore = useUserStore()
-const {userId, username} = storeToRefs(userStore)
+import { useHabitStore } from '@/stores/habit'
 
 const emit = defineEmits(['closed'])
-const habitName= ref('')
-const habitDescription = ref('')
-const selectedClassification = ref()
+const habitStore = useHabitStore()
+const {habitId, habitName, habitDescription, habitClassification, habitCreatedDate} = storeToRefs(habitStore)
 
-async function createHabit(isActive)
+const entryNote = ref('')
+const selectedStatus = ref()
+
+async function createHabitEntry(isActive)
 {
-    let url = 'http://127.0.0.1:5000/habit/create'
-    if(userId.value == '')
+    let url = 'http://127.0.0.1:5000/habit_entry/create'
+    if(habitId.value == '')
     {
-        userId.value = '1'
+        habitId.value = '1'
     }
 
     let data = {
-        user_id: userId.value,
-        name: habitName.value,
-        description: habitDescription.value,
-        classification: selectedClassification.value,
+        habit_id: habitId.value,
+        status: selectedStatus.value,
+        note: entryNote.value,
         created_date: new Date()
     }
     let headers = {
@@ -97,7 +86,6 @@ async function createHabit(isActive)
         console.log(response)
     })
     .catch(err => console.error("Network or parsing error:", err))
-
     isActive.value = false
     close()
 }

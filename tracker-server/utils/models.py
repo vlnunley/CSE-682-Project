@@ -49,7 +49,7 @@ class HabitEntry(TrackerBaseModel):
     note: Optional[str] = None
     status: str
     habit_id: int
-    goal_id: int
+    goal_id: Optional[int] = None
 
 @dataclass(kw_only=True)
 class Mood(TrackerBaseModel):

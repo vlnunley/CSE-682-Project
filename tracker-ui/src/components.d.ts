@@ -11,6 +11,8 @@ declare module 'vue' {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     CreateUser: typeof import('./components/User/CreateUser.vue')['default']
     HabitCreate: typeof import('./components/Habit/HabitCreate.vue')['default']
+    HabitEntry: typeof import('./components/Habit/HabitEntry.vue')['default']
+    HabitEntryCreate: typeof import('./components/Habit/HabitEntryCreate.vue')['default']
     HabitList: typeof import('./components/Habit/HabitList.vue')['default']
     HelloWorld: typeof import('./components/Home.vue')['default']
     Home: typeof import('./components/Home.vue')['default']
