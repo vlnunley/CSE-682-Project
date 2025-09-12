@@ -106,24 +106,21 @@ const visible = ref(false)
 async function login()
 {
     let url = 'http://127.0.0.1:5000/user/'+username.value
-    await axios
-    .get(url)
-    .then(response => {
-        console.log(response)
-        if(response.data.data["password"] == password.value)
-        {
-            router.push("/home")
-            userStore.$patch({
-                userId: response.data.data["id"],
-                username: response.data.data["username"]
-            })
-        }
-        else{
-            message.value = "Incorrect Username or Password."
-            snackbar.value = true
-        }
+    const response = await axios.get(url)
+    
+    console.log(response)
+    userStore.$patch({
+        userId: response.data.data["id"],
+        username: response.data.data["username"]
     })
-    .catch(err => console.error("Network or parsing error:", err))
+    if(response.data.data["password"] == password.value)
+    {
+        router.push("/home")
+    }
+    else{
+        message.value = "Incorrect Username or Password."
+        snackbar.value = true
+    }
 }
 
 </script>

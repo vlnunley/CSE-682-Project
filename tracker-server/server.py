@@ -5,6 +5,7 @@ from apis.goal_api import goal_bp
 from apis.habit_api import habit_bp
 from apis.habit_entry_api import habit_entry_bp
 from apis.user_api import user_bp
+from apis.mood_api import mood_bp
 
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
@@ -13,6 +14,7 @@ app.register_blueprint(goal_bp, url_prefix="/goal")
 app.register_blueprint(habit_bp, url_prefix="/habit")
 app.register_blueprint(habit_entry_bp, url_prefix="/habit_entry")
 app.register_blueprint(user_bp)
+app.register_blueprint(mood_bp, url_prefix="/mood")
 
 for rule in app.url_map.iter_rules():
     print(rule, rule.methods)
@@ -32,6 +34,7 @@ def add_headers(response):
 @app.route("/")
 def index():
     return "API for the Habit and Mood Tracker"
+    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
