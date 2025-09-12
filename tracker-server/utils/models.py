@@ -62,11 +62,13 @@ class MoodEntry(TrackerBaseModel):
     TABLE: ClassVar[str] = "mood_entry"
     id: Optional[int] = None
     created_date: datetime
-    mood: Mood
+    note: Optional[str] = None
+    mood_id: int
+    user_id: int
 
 @dataclass(kw_only=True)
 class HabitMood(TrackerBaseModel):
     TABLE: ClassVar[str] = "habit_mood"
     id: Optional[int] = None
-    mood: Mood
-    habit: Habit
+    mood_id: int
+    habit_id: int
