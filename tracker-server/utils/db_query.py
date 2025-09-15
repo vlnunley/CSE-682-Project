@@ -1,3 +1,5 @@
+# Contains common DB SQL queries and the DB connection
+
 from dataclasses import fields
 from flask import jsonify, make_response
 import psycopg

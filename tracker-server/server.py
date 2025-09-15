@@ -1,3 +1,5 @@
+# Main file that hosts the server and connects to all the different api blueprints
+
 import json
 from flask import Flask, request
 

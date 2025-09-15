@@ -1,3 +1,4 @@
+# API Endpoints and class functions for Habit Entries
 from flask import Blueprint, current_app, jsonify, make_response, request
 
 from utils.db_query import (

@@ -1,3 +1,4 @@
+# API Endpoints and class functions for Mood and Mood Entries
 from flask import Blueprint, current_app, jsonify, make_response, request
 
 from utils.db_query import (
@@ -13,7 +14,7 @@ from utils.models import MoodEntry, Mood
 mood_bp = Blueprint("mood", __name__)
 
 @mood_bp.route("", methods=["POST"])
-def get_goals():
+def get_moods():
     body = request.get_json()
     user_id = body["user_id"]
 
@@ -37,13 +38,13 @@ def get_goals():
     return jsonify(moods)
 
 @mood_bp.route("/create", methods=["POST", "PUT"])
-def create_goal():
+def create_mood():
     with get_db_connection(current_app.config) as db:
         model = MoodEntry(**request.get_json())
         return jsonify(create_model(db, model))
 
 @mood_bp.route("/update/<id>", methods=["POST"])
-def update_goal(id: int):
+def update_mood(id: int):
     with get_db_connection(current_app.config) as db:
         model = MoodEntry(**request.get_json())
         try:
@@ -53,7 +54,7 @@ def update_goal(id: int):
             return make_response(jsonify({"error": str(exc)}), 404)
         
 @mood_bp.route("/<id>", methods=["POST"])
-def delete_goal(id: int):
+def delete_mood(id: int):
     with get_db_connection(current_app.config) as db:
         model = MoodEntry(**request.get_json())
         try:
